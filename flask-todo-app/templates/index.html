@@ -1,0 +1,10 @@
+<form action="/add" method="post">
+    <input type="text" name="task" placeholder="New Task" /n>
+    <button type="submit">Add</button>
+</form>
+
+<ul>
+    {% for task in tasks %}
+	<li>{{ task }}</li>
+    {% endfor %}
+</ul>
