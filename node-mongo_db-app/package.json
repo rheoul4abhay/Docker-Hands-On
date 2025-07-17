@@ -1,0 +1,9 @@
+{
+  "name": "node-mongo_db-app",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.0.0"
+  }
+}
+
