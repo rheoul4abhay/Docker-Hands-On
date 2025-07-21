@@ -1,0 +1,17 @@
+services:
+  service1:
+    build: ./service1
+    ports:
+      - "5000:5000"
+    networks:
+      - frontend
+      - backend
+
+  service2:
+    build: ./service2
+    networks:
+      - backend
+
+networks:
+  frontend:
+  backend:
