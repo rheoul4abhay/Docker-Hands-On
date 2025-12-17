@@ -8,7 +8,7 @@ RUN mvn clean install -DskipTests=true
 # ---------Stage 2) Run Application in the runtime
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-# Copy the built jar file from the builder stage
+# Copy the built jar file from the builder stage, NOTE: that the name "expenseapp.jar" isnt random and it comes from the application properties file so look into it and then name the built jar file accordingly
 COPY --from=builder /app/target/*.jar /app/expenseapp.jar
 
 # Expose the application port
