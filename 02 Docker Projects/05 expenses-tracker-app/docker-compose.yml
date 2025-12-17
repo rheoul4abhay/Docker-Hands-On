@@ -1,0 +1,40 @@
+services:
+  mysql:
+    image: mysql
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Test@123
+      MYSQL_DATABASE: expenses_tracker
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - myapp-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pTest@123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: always
+
+  mainapp:
+    depends_on:
+      - mysql
+    build:
+      context: .
+    container_name: expenses_tracker
+    environment:
+      SPRING_DATASOURCE_USES: root
+      SPRING_DATASOURCE_PASSWORD: Test@123
+      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/expenses_tracker?allowPublicKeyRetrieval=true&useSSL=false"
+    ports:
+      - "8080:8080"
+    networks:
+      - myapp-network
+    restart: always
+  
+volumes:
+  mysql-data:
+
+networks:
+  myapp-network:

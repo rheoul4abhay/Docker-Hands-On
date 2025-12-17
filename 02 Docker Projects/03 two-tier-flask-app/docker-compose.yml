@@ -1,0 +1,48 @@
+services:
+  mysql:
+    container_name: mysql
+    image: mysql
+    environment:
+      MYSQL_DATABASE: devops
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - two-tier-net
+    healthcheck: # To make sure MySQL is up and started accepting connections before flask-app service starts
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot --silent || exit 1"]      
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  flask-app:
+    depends_on:
+      mysql:
+        condition: service_healthy # makes sure the health status of mysql service is healthy before it starts flask-app service
+    container_name: two-tier-backend
+    build:
+      context: . # Location where the Dockerfile to build is present
+      dockerfile: Dockerfile.prod # If instead of default Dockerfile we wanna run some other Dockerfile in same folder like Dockerfile.prod, then we will have to mention it specifically like here, if wanna run just the default Dockerfile, skip this dockerfile key
+    ports:
+      - "5000:5000"
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DB: devops
+    networks:
+      - two-tier-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: always
+
+volumes:
+  mysql-data:
+
+networks:
+  two-tier-net:
